@@ -22,15 +22,10 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import React from 'react';
 
+import { formSchema } from '@/lib/auth-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
-const formSchema = z.object({
-	name: z.string().min(2).max(50),
-	email: z.string().min(2).max(50),
-	password: z.string().min(2).max(50),
-});
 
 export default function SignUp() {
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -94,7 +89,9 @@ export default function SignUp() {
 								</FormItem>
 							)}
 						/>
-						<Button type="submit">Submit</Button>
+						<Button className="w-full" type="submit">
+							Submit
+						</Button>
 					</form>
 				</Form>
 			</CardContent>
