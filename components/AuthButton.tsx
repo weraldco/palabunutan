@@ -1,6 +1,6 @@
 'use client';
 import React, { ReactNode } from 'react';
-// import { AiOutlineLoading3Quarters } from 'react-icons';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 type AuthButtnProps = {
 	loading: boolean;
@@ -16,7 +16,11 @@ const AuthButton: React.FC<AuthButtnProps> = ({ loading, children }) => {
 		>
 			{loading ? (
 				<div className="flex justify-center items-center">
-					<span className="animate-pulse text-center">Loading..</span>
+					<AiOutlineLoading3Quarters
+						size={30}
+						className="animate-spin text-center"
+					/>
+					{/* <span className="animate-pulse text-center">Loading..</span> */}
 				</div>
 			) : (
 				<p>{children}</p>
