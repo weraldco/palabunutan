@@ -8,10 +8,10 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 
-import { Button } from '@/components/ui/button';
 import {
 	Form,
 	FormControl,
+	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -20,28 +20,38 @@ import {
 import { Input } from '@/components/ui/input';
 
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 
+import { checkLoginDetails } from '@/actions/userActions';
+import AuthButton from '@/components/AuthButton';
 import { signFormSchema } from '@/lib/auth-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 export default function SignIn() {
-	// 1. Define your form.
+	const [error, setError] = useState('');
+	const [loading, setLoading] = useState(false);
+
 	const form = useForm<z.infer<typeof signFormSchema>>({
 		resolver: zodResolver(signFormSchema),
 		defaultValues: {
-			email: '',
+			secretName: '',
 			password: '',
 		},
 	});
 
 	// 2. Define a submit handler.
-	function onSubmit(values: z.infer<typeof signFormSchema>) {
-		// Do something with the form values.
-		// ✅ This will be type-safe and validated.
-		console.log(values);
+	async function onSubmit(values: z.infer<typeof signFormSchema>) {
+		setLoading(true);
+		const check = await checkLoginDetails(values.secretName, values.password);
+		if (check !== null) {
+			setLoading(false);
+			setError(check as string);
+			setLoading(false);
+		} else {
+			setLoading(false);
+		}
 	}
 
 	return (
@@ -57,12 +67,14 @@ export default function SignIn() {
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 						<FormField
 							control={form.control}
-							name="email"
+							name="secretName"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Email</FormLabel>
+									<FormLabel className="text-base text-gray-900">
+										Secret name
+									</FormLabel>
 									<FormControl>
-										<Input placeholder="john.doe@email.com" {...field} />
+										<Input placeholder="Enter your secret name.." {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -73,17 +85,26 @@ export default function SignIn() {
 							name="password"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Password</FormLabel>
+									<FormLabel className="text-base text-gray-900">
+										Password
+									</FormLabel>
 									<FormControl>
-										<Input type="password" placeholder="*******" {...field} />
+										<Input
+											type="password"
+											placeholder="Enter your password.."
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
-						<Button className="w-full" type="submit">
-							Submit
-						</Button>
+						{error && (
+							<FormDescription className="text-red-400">
+								{error}
+							</FormDescription>
+						)}
+						<AuthButton loading={loading}>Login</AuthButton>
 					</form>
 				</Form>
 			</CardContent>

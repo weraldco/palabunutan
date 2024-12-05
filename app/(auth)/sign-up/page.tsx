@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import {
 	Card,
@@ -12,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import {
 	Form,
 	FormControl,
+	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -20,25 +22,45 @@ import {
 import { Input } from '@/components/ui/input';
 
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 
+import { getUserBySecretName, registerUser } from '@/actions/userActions';
+import AuthButton from '@/components/AuthButton';
 import { formSchema } from '@/lib/auth-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 export default function SignUp() {
+	const [error, setError] = useState('');
+	const [loading, setLoading] = useState(false);
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			name: '',
-			email: '',
+			fullname: '',
+			secretName: '',
 			password: '',
+			repeatPassword: '',
+			firstWishlist: '',
+			secondWishlist: '',
+			thirdWishlist: '',
 		},
 	});
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
+	async function onSubmit(values: z.infer<typeof formSchema>) {
+		setLoading(true);
+		if (!(await getUserBySecretName(values.secretName))) {
+			if (values.password === values.repeatPassword) {
+				registerUser(values);
+				setLoading(false);
+			} else {
+				setLoading(false);
+				setError("Password didn't match!");
+			}
+		} else {
+			setLoading(false);
+			setError('Secret name is already in registered!');
+		}
 	}
 
 	return (
@@ -52,12 +74,12 @@ export default function SignUp() {
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 						<FormField
 							control={form.control}
-							name="name"
+							name="fullname"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Name</FormLabel>
+									<FormLabel>Fullname</FormLabel>
 									<FormControl>
-										<Input placeholder="John Doe" {...field} />
+										<Input placeholder="Werald Opolento" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -65,12 +87,12 @@ export default function SignUp() {
 						/>
 						<FormField
 							control={form.control}
-							name="email"
+							name="secretName"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Email</FormLabel>
+									<FormLabel>Secret Name</FormLabel>
 									<FormControl>
-										<Input placeholder="john.doe@email.com" {...field} />
+										<Input placeholder="eg. Zorro" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -89,9 +111,78 @@ export default function SignUp() {
 								</FormItem>
 							)}
 						/>
-						<Button className="w-full" type="submit">
-							Submit
-						</Button>
+						<FormField
+							control={form.control}
+							name="repeatPassword"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Repeat password</FormLabel>
+									<FormControl>
+										<Input type="password" placeholder="*******" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormLabel>Your wishlist</FormLabel>
+						<FormField
+							control={form.control}
+							name="firstWishlist"
+							render={({ field }) => (
+								<FormItem>
+									{/* <FormLabel>Wishlist 1</FormLabel> */}
+									<FormControl>
+										<Input
+											type="text"
+											placeholder="Enter your first option wishlist.."
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="secondWishlist"
+							render={({ field }) => (
+								<FormItem>
+									{/* <FormLabel>Wishlist 1</FormLabel> */}
+									<FormControl>
+										<Input
+											type="text"
+											placeholder="Enter your second option wishlist.."
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="thirdWishlist"
+							render={({ field }) => (
+								<FormItem>
+									{/* <FormLabel>Wishlist 1</FormLabel> */}
+									<FormControl>
+										<Input
+											type="text"
+											placeholder="Enter your third option wishlist.."
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						{error && (
+							<FormDescription className="text-red-500 text-sm">
+								{error}
+							</FormDescription>
+						)}
+
+						<AuthButton loading={loading}>Submit</AuthButton>
 					</form>
 				</Form>
 			</CardContent>
