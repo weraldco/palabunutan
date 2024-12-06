@@ -2,8 +2,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
+import { signIn, signOut } from '@/auth';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
+import { AuthError } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -55,8 +57,6 @@ export const checkLoginDetails = async (
 };
 
 export const registerUser = async (values: UserTypes) => {
-	// console.log(values);
-
 	const {
 		fullname,
 		secretName,
@@ -86,4 +86,35 @@ export const registerUser = async (values: UserTypes) => {
 		revalidatePath('/sign-up');
 		redirect('/');
 	}
+};
+
+export const handleCredentialsSignIn = async ({
+	secretName,
+	password,
+}: {
+	secretName: string;
+	password: string;
+}) => {
+	try {
+		await signIn('credentials', { secretName, password, redirectTo: '/' });
+	} catch (error) {
+		if (error instanceof AuthError) {
+			switch (error.type) {
+				case 'CredentialsSignin':
+					return {
+						message: 'Invalid credentials',
+					};
+				default:
+					return {
+						messsage: 'Something went wrong',
+					};
+			}
+		}
+
+		throw error;
+	}
+};
+
+export const handleSignOut = async () => {
+	await signOut();
 };

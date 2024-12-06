@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import {
 	Card,
@@ -22,16 +23,23 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
-import { checkLoginDetails } from '@/actions/userActions';
+import {
+	checkLoginDetails,
+	handleCredentialsSignIn,
+} from '@/actions/userActions';
 import AuthButton from '@/components/AuthButton';
 import { signFormSchema } from '@/lib/auth-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 export default function SignIn() {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
+	const session = useSession();
+	if (session == null) redirect('/');
 
 	const form = useForm<z.infer<typeof signFormSchema>>({
 		resolver: zodResolver(signFormSchema),
@@ -43,14 +51,19 @@ export default function SignIn() {
 
 	// 2. Define a submit handler.
 	async function onSubmit(values: z.infer<typeof signFormSchema>) {
-		setLoading(true);
-		const check = await checkLoginDetails(values.secretName, values.password);
-		if (check !== null) {
-			setLoading(false);
-			setError(check as string);
-			setLoading(false);
-		} else {
-			setLoading(false);
+		try {
+			setLoading(true);
+			const check = await checkLoginDetails(values.secretName, values.password);
+			if (check !== null) {
+				setLoading(false);
+				setError(check as string);
+				setLoading(false);
+			} else {
+				const result = await handleCredentialsSignIn(values);
+				setLoading(false);
+			}
+		} catch (error) {
+			console.log('An unexpected error occurred. Please try again.');
 		}
 	}
 

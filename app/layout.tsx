@@ -1,4 +1,3 @@
-import { auth } from '@/auth';
 import Navbar from '@/components/Navbar';
 import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
@@ -14,9 +13,8 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const session = await auth();
 	return (
-		<SessionProvider session={session}>
+		<SessionProvider>
 			<html lang="en">
 				<body className={`antialiased`}>
 					<Navbar /> {children}
