@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const formSchema = z.object({
-	fullname: z
+	name: z
 		.string()
 		.min(1, { message: 'Fullname is required' })
 		.max(50, { message: 'Name cannot exceed 50 characters.' }),

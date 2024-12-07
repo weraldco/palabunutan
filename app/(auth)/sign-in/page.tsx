@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import {
 	Card,
@@ -30,16 +29,15 @@ import {
 import AuthButton from '@/components/AuthButton';
 import { signFormSchema } from '@/lib/auth-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 export default function SignIn() {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
-	const session = useSession();
-	if (session == null) redirect('/');
+	// const { data: session } = useSession();
+	// console.log(session);
+	// if (session) redirect('/');
 
 	const form = useForm<z.infer<typeof signFormSchema>>({
 		resolver: zodResolver(signFormSchema),
@@ -59,16 +57,16 @@ export default function SignIn() {
 				setError(check as string);
 				setLoading(false);
 			} else {
-				const result = await handleCredentialsSignIn(values);
+				await handleCredentialsSignIn(values);
 				setLoading(false);
 			}
 		} catch (error) {
-			console.log('An unexpected error occurred. Please try again.');
+			console.log('An unexpected error occurred. Please try again.', error);
 		}
 	}
 
 	return (
-		<Card className="w-full max-w-md mx-auto">
+		<Card className="w-full max-w-md mx-auto bg-[#18191A] border-0 text-white">
 			<CardHeader>
 				<CardTitle>Sign In</CardTitle>
 				<CardDescription>
@@ -82,12 +80,16 @@ export default function SignIn() {
 							control={form.control}
 							name="secretName"
 							render={({ field }) => (
-								<FormItem>
-									<FormLabel className="text-base text-gray-900">
+								<FormItem className="">
+									<FormLabel className="text-base text-gray-400">
 										Secret name
 									</FormLabel>
 									<FormControl>
-										<Input placeholder="Enter your secret name.." {...field} />
+										<Input
+											className="rounded-full text-gray-800 text-base md:text-lg"
+											placeholder="Enter your secret name.."
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -98,13 +100,14 @@ export default function SignIn() {
 							name="password"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel className="text-base text-gray-900">
+									<FormLabel className="text-base text-gray-400 ">
 										Password
 									</FormLabel>
 									<FormControl>
 										<Input
 											type="password"
 											placeholder="Enter your password.."
+											className="rounded-full text-gray-800 text-base md:text-lg"
 											{...field}
 										/>
 									</FormControl>
@@ -124,7 +127,7 @@ export default function SignIn() {
 			<CardFooter className="flex justify-center">
 				<p className="text-sm text-muted-foreground">
 					Don&apos;t have an account yet?{' '}
-					<Link href="/sign-up" className="text-primary hover:underline">
+					<Link href="/sign-up" className="text-white hover:underline">
 						Sign-up
 					</Link>
 				</p>

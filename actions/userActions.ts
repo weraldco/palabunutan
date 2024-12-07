@@ -2,21 +2,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
-import { signIn, signOut } from '@/auth';
+import { auth, signIn, signOut } from '@/auth';
 import prisma from '@/lib/prisma';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 type UserTypes = {
-	fullname: string;
+	name: string;
 	secretName: string;
 	password: string;
 	repeatPassword: string;
 	firstWishlist: string;
 	secondWishlist?: string | undefined;
 	thirdWishlist?: string | undefined;
+};
+
+export const getUserById = async (id: string) => {
+	try {
+		const user = await prisma.user.findUnique({ where: { id } });
+		return user;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
 };
 
 export const getUserBySecretName = async (secretName: string) => {
@@ -58,7 +68,7 @@ export const checkLoginDetails = async (
 
 export const registerUser = async (values: UserTypes) => {
 	const {
-		fullname,
+		name,
 		secretName,
 		password,
 		repeatPassword,
@@ -72,7 +82,7 @@ export const registerUser = async (values: UserTypes) => {
 	try {
 		await prisma.user.create({
 			data: {
-				fullname,
+				name,
 				secretName,
 				hashedPassword,
 				firstWishlist,
@@ -84,7 +94,7 @@ export const registerUser = async (values: UserTypes) => {
 		console.log(error);
 	} finally {
 		revalidatePath('/sign-up');
-		redirect('/');
+		redirect('/sign-in');
 	}
 };
 
@@ -112,9 +122,76 @@ export const handleCredentialsSignIn = async ({
 		}
 
 		throw error;
+	} finally {
+		revalidatePath('/sign-in');
+		redirect('/dashboard');
 	}
 };
 
 export const handleSignOut = async () => {
 	await signOut();
+};
+
+export const pickMonitoMonita = async () => {
+	const session = await auth();
+	// console.log('SESSION', session);
+	// console.log(session?.user?.secretName);
+	if (session?.user?.secretName) {
+		const allUsers = await prisma.user.findMany({
+			where: {
+				OR: [
+					{
+						picked: false,
+					},
+				],
+				NOT: {
+					secretName: session.user.secretName,
+				},
+			},
+			select: {
+				id: true,
+				secretName: true,
+				picked: true,
+				youPicked: true,
+			},
+		});
+
+		const userPool = allUsers.filter(
+			(user) => user.youPicked != session.user?.secretName
+		);
+		console.log('USERPOOL FILTERED', userPool);
+		const randomNum = Math.floor(Math.random() * userPool.length);
+		const userPicked = userPool[randomNum]; // random pick from the fetch data in db
+
+		await prisma.user.update({
+			where: {
+				secretName: session?.user?.secretName,
+			},
+			data: {
+				youPicked: userPicked.secretName,
+			},
+		});
+		await prisma.user.update({
+			where: {
+				id: userPicked.id,
+			},
+			data: {
+				picked: true,
+			},
+		});
+		revalidatePath('/dashboard');
+	}
+};
+
+export const getPickedResult = async (secretName: string) => {
+	try {
+		const result = await prisma.user.findUnique({
+			where: {
+				secretName,
+			},
+		});
+		return result;
+	} catch (error) {
+		console.log(error);
+	}
 };

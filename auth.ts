@@ -1,15 +1,74 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import bcrypt from 'bcryptjs';
-import NextAuth from 'next-auth';
+import NextAuth, { type DefaultSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import { getUserById } from './actions/userActions';
 import { signFormSchema } from './lib/auth-schema';
 import prisma from './lib/prisma';
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export type ExtendedUser = DefaultSession['user'] & {
+	secretName: string;
+	youPicked: string;
+	firstWishlist: string;
+	secondWishlist: string;
+	thirdWishlist: string;
+};
+
+declare module 'next-auth' {
+	interface Session {
+		user: ExtendedUser;
+	}
+}
+
+export const {
+	handlers: { GET, POST },
+	signIn,
+	signOut,
+	auth,
+} = NextAuth({
 	adapter: PrismaAdapter(prisma),
 	session: { strategy: 'jwt' },
+
+	callbacks: {
+		async session({ token, session }) {
+			if (token.sub && session.user) {
+				session.user.id = token.sub;
+			}
+			if (token.secretName && session.user) {
+				session.user.secretName = token.secretName as string;
+				session.user.youPicked = token.youPicked as string;
+				session.user.firstWishlist = token.firstWishlist as string;
+				session.user.secondWishlist = token.secondWishlist as string;
+				session.user.thirdWishlist = token.thirdWishlist as string;
+			}
+
+			return session;
+		},
+		async jwt({ token }) {
+			if (!token.sub) return token;
+
+			// const user = await prisma.user.findUnique({ where: { id: token.sub } });
+
+			const user = await getUserById(token.sub as string);
+
+			console.log(user);
+			if (!user) return token;
+			token.secretName = user.secretName;
+			token.youPicked = user.youPicked;
+
+			if (user.youPicked == null) return token;
+
+			const userPicked = await prisma.user.findUnique({
+				where: { secretName: user.youPicked },
+			});
+
+			token.firstWishlist = userPicked?.firstWishlist;
+			token.secondWishlist = userPicked?.secondWishlist;
+			token.thirdWishlist = userPicked?.thirdWishlist;
+
+			return token;
+		},
+	},
 	providers: [
 		Credentials({
 			name: 'Credentials',
@@ -48,37 +107,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 					console.log('Incorrect password!');
 					return null;
 				}
-
 				return user;
 			},
 		}),
 	],
-	callbacks: {
-		// authorized({ request: { nextUrl }, auth }) {
-		// 	const isLoggedIn = !!auth?.user;
-		// 	const { pathname } = nextUrl;
-
-		// 	if (pathname.startsWith('/sign-in') && isLoggedIn) {
-		// 		return Response.redirect(new URL('/', nextUrl));
-		// 	}
-
-		// 	if (pathname.startsWith('/sign-up') && isLoggedIn) {
-		// 		return Response.redirect(new URL('/', nextUrl));
-		// 	}
-		// 	return !!auth;
-		// },
-
-		jwt({ token, user }) {
-			if (user) {
-				token.id = user.id as string;
-			}
-			return token;
-		},
-		session({ session, token }) {
-			session.user.id = token.id;
-			return session;
-		},
-	},
 	pages: {
 		signIn: '/sign-in',
 	},

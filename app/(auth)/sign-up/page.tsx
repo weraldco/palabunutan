@@ -34,14 +34,14 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 export default function SignUp() {
-	const session = useSession();
-	if (session == null) redirect('/');
+	// const session = useSession();
+	// if (session == null) redirect('/');
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			fullname: '',
+			name: '',
 			secretName: '',
 			password: '',
 			repeatPassword: '',
@@ -68,7 +68,7 @@ export default function SignUp() {
 	}
 
 	return (
-		<Card className="w-full max-w-md mx-auto">
+		<Card className="w-full max-w-md mx-auto  bg-[#18191A] border-0 text-white">
 			<CardHeader>
 				<CardTitle>Sign Up</CardTitle>
 				<CardDescription>Create your account to get started.</CardDescription>
@@ -78,12 +78,18 @@ export default function SignUp() {
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 						<FormField
 							control={form.control}
-							name="fullname"
+							name="name"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Fullname</FormLabel>
+									<FormLabel className="text-base text-gray-400">
+										Fullname
+									</FormLabel>
 									<FormControl>
-										<Input placeholder="Werald Opolento" {...field} />
+										<Input
+											className="rounded-full text-gray-800 text-base md:text-lg"
+											placeholder="eg. Werald Opolento"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -94,9 +100,15 @@ export default function SignUp() {
 							name="secretName"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Secret Name</FormLabel>
+									<FormLabel className="text-base text-gray-400">
+										Secret Name
+									</FormLabel>
 									<FormControl>
-										<Input placeholder="eg. Zorro" {...field} />
+										<Input
+											className="rounded-full text-gray-800 text-base md:text-lg"
+											placeholder="eg. Zorro"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -107,9 +119,16 @@ export default function SignUp() {
 							name="password"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Password</FormLabel>
+									<FormLabel className="text-base text-gray-400">
+										Password
+									</FormLabel>
 									<FormControl>
-										<Input type="password" placeholder="*******" {...field} />
+										<Input
+											className="rounded-full text-gray-800 text-base md:text-lg"
+											type="password"
+											placeholder="*******"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -120,23 +139,33 @@ export default function SignUp() {
 							name="repeatPassword"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Repeat password</FormLabel>
+									<FormLabel className="text-base text-gray-400">
+										Repeat password
+									</FormLabel>
 									<FormControl>
-										<Input type="password" placeholder="*******" {...field} />
+										<Input
+											className="rounded-full text-gray-800 text-base md:text-lg"
+											type="password"
+											placeholder="*******"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
-						<FormLabel>Your wishlist</FormLabel>
+						<FormDescription className="text-base text-gray-400">
+							Your wishlist
+						</FormDescription>
 						<FormField
 							control={form.control}
 							name="firstWishlist"
 							render={({ field }) => (
 								<FormItem>
-									{/* <FormLabel>Wishlist 1</FormLabel> */}
+									{/* <FormLabel className='text-base text-gray-400'>Wishlist 1</FormLabel> */}
 									<FormControl>
 										<Input
+											className="rounded-full text-gray-800 text-base md:text-lg"
 											type="text"
 											placeholder="Enter your first option wishlist.."
 											{...field}
@@ -151,9 +180,10 @@ export default function SignUp() {
 							name="secondWishlist"
 							render={({ field }) => (
 								<FormItem>
-									{/* <FormLabel>Wishlist 1</FormLabel> */}
+									{/* <FormLabel className='text-base text-gray-400'>Wishlist 1</FormLabel> */}
 									<FormControl>
 										<Input
+											className="rounded-full text-gray-800 text-base md:text-lg"
 											type="text"
 											placeholder="Enter your second option wishlist.."
 											{...field}
@@ -168,9 +198,10 @@ export default function SignUp() {
 							name="thirdWishlist"
 							render={({ field }) => (
 								<FormItem>
-									{/* <FormLabel>Wishlist 1</FormLabel> */}
+									{/* <FormLabel className='text-base text-gray-400'>Wishlist 1</FormLabel> */}
 									<FormControl>
 										<Input
+											className="rounded-full text-gray-800 text-base md:text-lg"
 											type="text"
 											placeholder="Enter your third option wishlist.."
 											{...field}
@@ -193,7 +224,7 @@ export default function SignUp() {
 			<CardFooter className="flex justify-center">
 				<p className="text-sm text-muted-foreground">
 					Already have an account?{' '}
-					<Link href="/sign-in" className="text-primary hover:underline">
+					<Link href="/sign-in" className="text-white hover:underline">
 						Sign-in
 					</Link>
 				</p>

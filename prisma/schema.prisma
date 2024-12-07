@@ -14,7 +14,7 @@ generator client {
 
 model User {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  fullname       String?
+  name           String?
   secretName     String   @unique
   hashedPassword String?
   youPicked      String?
