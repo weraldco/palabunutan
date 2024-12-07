@@ -182,16 +182,3 @@ export const pickMonitoMonita = async () => {
 		revalidatePath('/dashboard');
 	}
 };
-
-export const getPickedResult = async (secretName: string) => {
-	try {
-		const result = await prisma.user.findUnique({
-			where: {
-				secretName,
-			},
-		});
-		return result;
-	} catch (error) {
-		console.log(error);
-	}
-};
