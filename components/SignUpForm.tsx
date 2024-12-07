@@ -67,7 +67,7 @@ export default function SignUpForm() {
 						<FormFieldElement
 							formControl={form.control}
 							name="name"
-							label="Fullname"
+							label="Fullname "
 							placeHolder="Enter your full name.."
 							type="text"
 						/>
@@ -76,7 +76,7 @@ export default function SignUpForm() {
 							formControl={form.control}
 							name="secretName"
 							label="Secret name"
-							placeHolder="eg. Zorro"
+							placeHolder="eg. Zorro (This is your username to login.)"
 							type="text"
 						/>
 
@@ -97,7 +97,12 @@ export default function SignUpForm() {
 						/>
 
 						<FormDescription className="text-base text-gray-400">
-							Your wishlist
+							Your wishlist{' '}
+							<span className="text-sm text-gray-500">
+								(You can provide 3 wishlist options for the gift exchange, so
+								the person picking you as their Secret Santa has better
+								choices.)
+							</span>
 						</FormDescription>
 
 						<FormFieldElement
