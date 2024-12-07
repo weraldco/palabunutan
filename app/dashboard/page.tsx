@@ -40,18 +40,39 @@ export default async function DashboardPage() {
 						</div>
 					) : (
 						<div className="text-sm md:text-base italic w-[300px] md:w-[400px] flex flex-col gap-2">
-							<span>Your secret santa is</span>
+							<span>Your Secret Santa is</span>
 							<div className="bg-teal-500 p-10 rounded-xl flex flex-col gap-10">
 								<span className=" font-bold text-5xl text-pink-300 ">
 									{session.user.youPicked.toUpperCase()}
 								</span>
-								<div className="flex flex-col text-left">
-									<h1> {session.user.youPicked.toUpperCase()} WISHLIST:</h1>
-									<span>{session.user.firstWishlist}</span>
+							</div>
+							<div className="flex flex-col text-left gap-3">
+								<h1 className="text-base">WISHLIST</h1>
+								<span className="text-gray-500">
+									(Select any item from the wishlist below, you only need one
+									gift for your Secret Santa.)
+								</span>
+								<div className="gap-4 flex flex-col">
+									<div className="flex gap-2  items-center bg-gray-500 p-2 rounded-xl ">
+										<span className="bg-teal-500 px-4 py-2 rounded-full">
+											1
+										</span>
+										{session.user.firstWishlist}
+									</div>
 									{session.user.secondWishlist ? (
-										<span>{session.user.secondWishlist}</span>
+										<div className="flex gap-2  items-center bg-gray-500 p-2 rounded-xl ">
+											<span className="bg-teal-500 px-4 py-2 rounded-full">
+												2
+											</span>
+											{session.user.secondWishlist}
+										</div>
 									) : session.user.thirdWishlist ? (
-										<span>{session.user.thirdWishlist}</span>
+										<div className="flex gap-2  items-center bg-gray-500 p-2 rounded-xl ">
+											<span className="bg-teal-500 px-4 py-2 rounded-full">
+												3
+											</span>
+											{session.user.thirdWishlist}
+										</div>
 									) : null}
 								</div>
 							</div>
