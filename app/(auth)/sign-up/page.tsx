@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import {
 	Card,
@@ -9,7 +8,6 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 
-import { Button } from '@/components/ui/button';
 import {
 	Form,
 	FormControl,
@@ -28,14 +26,15 @@ import { getUserBySecretName, registerUser } from '@/actions/userActions';
 import AuthButton from '@/components/AuthButton';
 import { formSchema } from '@/lib/auth-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
+// import { useSession } from 'next-auth/react';
+// import { redirect } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 export default function SignUp() {
-	// const session = useSession();
-	// if (session == null) redirect('/');
+	// const { data: session } = useSession();
+	// if (session) redirect('/dashboard');
+
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const form = useForm<z.infer<typeof formSchema>>({

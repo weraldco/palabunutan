@@ -47,11 +47,8 @@ export const {
 		async jwt({ token }) {
 			if (!token.sub) return token;
 
-			// const user = await prisma.user.findUnique({ where: { id: token.sub } });
-
 			const user = await getUserById(token.sub as string);
 
-			console.log(user);
 			if (!user) return token;
 			token.secretName = user.secretName;
 			token.youPicked = user.youPicked;

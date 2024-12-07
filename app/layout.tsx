@@ -1,6 +1,6 @@
 // import Navbar from '@/components/Navbar';
 import type { Metadata } from 'next';
-// import { SessionProvider } from 'next-auth/react';
+import { SessionProvider } from 'next-auth/react';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -14,13 +14,13 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		// <SessionProvider session={session}>
-		<html lang="en">
-			<body className={`antialiased bg-[#18191A] text-white`}>
-				{/* <Navbar /> */}
-				{children}
-			</body>
-		</html>
-		// </SessionProvider>
+		<SessionProvider>
+			<html lang="en">
+				<body className={`antialiased bg-[#18191A] text-white`}>
+					{/* <Navbar /> */}
+					{children}
+				</body>
+			</html>
+		</SessionProvider>
 	);
 }

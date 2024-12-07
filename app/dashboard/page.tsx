@@ -14,8 +14,6 @@ export default async function DashboardPage() {
 	if (!session?.user) {
 		redirect('/');
 	}
-	// Lipat natin to sa api call
-	// const result = await getPickedResult(session.user.secretName as string);
 	return (
 		<div>
 			<Navbar />

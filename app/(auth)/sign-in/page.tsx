@@ -29,6 +29,8 @@ import {
 import AuthButton from '@/components/AuthButton';
 import { signFormSchema } from '@/lib/auth-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
+// import { useSession } from 'next-auth/react';
+// import { redirect } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -36,8 +38,7 @@ export default function SignIn() {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	// const { data: session } = useSession();
-	// console.log(session);
-	// if (session) redirect('/');
+	// if (session) redirect('/dashboard');
 
 	const form = useForm<z.infer<typeof signFormSchema>>({
 		resolver: zodResolver(signFormSchema),
@@ -57,7 +58,8 @@ export default function SignIn() {
 				setError(check as string);
 				setLoading(false);
 			} else {
-				await handleCredentialsSignIn(values);
+				const result = await handleCredentialsSignIn(values);
+				console.log(result.message);
 				setLoading(false);
 			}
 		} catch (error) {
