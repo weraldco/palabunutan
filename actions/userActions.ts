@@ -182,8 +182,14 @@ export const pickMonitoMonita = async () => {
 };
 
 export const getAllTheUser = async () => {
-	const user = await prisma.user.findMany({
-		select: { name: true, youPicked: true },
-	});
-	return user;
+	try {
+		const users = await prisma.user.findMany({
+			select: { name: true, youPicked: true },
+		});
+		return users;
+	} catch (error) {
+		console.error('Error fetching datas');
+	} finally {
+		revalidatePath('/registered');
+	}
 };
