@@ -19,8 +19,7 @@ export const formSchema = z.object({
 		.max(50, { message: 'Password cannot exceed to 50 characters.' }),
 	firstWishlist: z
 		.string()
-		.min(5, { message: 'First option for wishlist is required.' })
-		.max(500, { message: 'Password cannot exceed to 150 characters.' }),
+		.min(5, { message: 'First option for wishlist is required.' }),
 	secondWishlist: z.string().optional(),
 	thirdWishlist: z.string().optional(),
 });
