@@ -134,8 +134,6 @@ export const handleSignOut = async () => {
 
 export const pickMonitoMonita = async () => {
 	const session = await auth();
-	// console.log('SESSION', session);
-	// console.log(session?.user?.secretName);
 	if (session?.user?.secretName) {
 		const allUsers = await prisma.user.findMany({
 			where: {
@@ -181,4 +179,11 @@ export const pickMonitoMonita = async () => {
 		});
 		revalidatePath('/dashboard');
 	}
+};
+
+export const getAllTheUser = async () => {
+	const user = await prisma.user.findMany({
+		select: { name: true, youPicked: true },
+	});
+	return user;
 };
