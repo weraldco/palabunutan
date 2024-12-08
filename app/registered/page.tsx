@@ -5,7 +5,7 @@ export default async function RegisteredPage() {
 	const users = await getAllTheUser();
 	console.log(users);
 	return (
-		<div className=" flex flex-col justify-center items-center h-[60vh] gap-4">
+		<div className=" flex flex-col justify-center items-center gap-4">
 			<h1 className="text-2xl font-bold">Registered Guest</h1>
 
 			<div className="flex gap-2">
@@ -24,8 +24,10 @@ export default async function RegisteredPage() {
 						<li key={i} className="group flex flex-row gap-2 ">
 							<span
 								className={`${
-									user.youPicked == null ? `bg-teal-700` : 'bg-red-500'
-								} text-gray-300 font-bold px-4 py-2 group-hover:bg-teal-600  duration-200`}
+									user.youPicked == null
+										? `bg-teal-700 group-hover:bg-teal-600`
+										: 'bg-red-500 group-hover:bg-red-600'
+								} text-gray-300 font-bold px-4 py-2   duration-200`}
 							>
 								{i + 1}
 							</span>
