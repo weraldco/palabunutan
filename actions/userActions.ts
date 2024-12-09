@@ -155,13 +155,47 @@ export const pickMonitoMonita = async () => {
 				},
 			});
 
+			const allUsersPool = await prisma.user.findMany({
+				select: {
+					id: true,
+					secretName: true,
+					picked: true,
+					youPicked: true,
+				},
+			});
+
 			const userPool = allUsers.filter(
 				(user) => user.youPicked != session.user?.secretName
 			);
-			console.log('USERPOOL FILTERED', userPool);
-			const randomNum = Math.floor(Math.random() * userPool.length);
-			const userPicked = userPool[randomNum]; // random pick from the fetch data in db
 
+			console.log('ALL PARTICIPANTS', allUsersPool);
+			console.log('USERPOOL FILTERED', userPool);
+
+			type UserPickedT = {
+				[key: string]: any;
+			};
+
+			let userPicked: UserPickedT = {};
+			console.log(userPool.length);
+			if (userPool.length === 0) {
+				const endPool = await prisma.user.findMany({
+					where: { picked: false },
+					select: {
+						id: true,
+						secretName: true,
+						picked: true,
+						youPicked: true,
+					},
+				});
+
+				console.log(endPool);
+				userPicked = endPool[0];
+			} else {
+				const randomNum = Math.floor(Math.random() * userPool.length);
+				userPicked = userPool[randomNum];
+			}
+
+			// random pick from the fetch data in db
 			await prisma.user.update({
 				where: {
 					secretName: session?.user?.secretName,
